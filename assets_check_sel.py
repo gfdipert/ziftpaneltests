@@ -46,7 +46,7 @@ class LinkTests(object):
 				title = link.text[13:].encode('ascii','ignore')
 				link.click()
 				#print "This {0} is gated".format(link.text.encode('ascii', 'ignore'))
-				self.FormFill(link,title)
+				self.FormFill()
 				WebDriverWait(self.driver,5)
 				wp_links = self.driver.find_elements_by_partial_link_text('White Paper: ')
 				for link in wp_links:
@@ -88,7 +88,7 @@ class LinkTests(object):
 	def FormFill(self):
 		self.driver.find_element_by_id("firstname").send_keys("gwen")
 		self.driver.find_element_by_id("lastname").send_keys("dipert")
-		self.driver.find_element_by_id("email").send_keys("gwendipert@ziftsolutions.com")
+		self.driver.find_element_by_id("email").send_keys("email@test.com")
 		self.driver.find_element_by_id("phone").send_keys("555-555-5555")
 		self.driver.find_element_by_id("title").send_keys("QA")
 		self.driver.find_element_by_id("company").send_keys("Zift")
