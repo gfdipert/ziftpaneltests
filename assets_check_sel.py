@@ -85,7 +85,7 @@ class LinkTests(object):
 		except:
 			print "Oops, I failed with " + link.text
 
-	def FormFill(self,link,title):
+	def FormFill(self):
 		self.driver.find_element_by_id("firstname").send_keys("gwen")
 		self.driver.find_element_by_id("lastname").send_keys("dipert")
 		self.driver.find_element_by_id("email").send_keys("gwendipert@ziftsolutions.com")
