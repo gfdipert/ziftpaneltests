@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import screw_pdfs
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -33,17 +34,17 @@ class LinkTests(object):
 		for link in wp_links:
 			if not self.GateTest(link):
 				if "_blank" in link.get_attribute("target"):
-					title = link.text[13:]
+					title = link.text[22:]
 					link.click()
 					self.NewTab(link,title,self.url)
 				else:
-					title = link.text[13:]
+					title = link.text[22:]
 					link.click()
 					self.SameWindow(link,title)
 			else:
 				pass
 			if self.GateTest(link):
-				title = link.text[13:].encode('ascii','ignore')
+				title = link.text[22:].encode('ascii','ignore')
 				link.click()
 				#print "This {0} is gated".format(link.text.encode('ascii', 'ignore'))
 				self.FormFill()
@@ -51,19 +52,23 @@ class LinkTests(object):
 				wp_links = self.driver.find_elements_by_partial_link_text('White Paper: ')
 				for link in wp_links:
 					if "_blank" in link.get_attribute("target"):
-						title = link.text[13:]
+						title = link.text[22:]
 						link.click()
 						self.NewTab(link,title,self.url)
 						self.driver.execute_script("window.open(" + self.url + ");")
 						WebDriverWait(self.driver,5)
 					else:
-						title = link.text[13:]
+						title = link.text[22:]
 						link.click()
 						self.SameWindow(link,title)
 
 	def NewTab(self,link,title,url):
+		url = link.get_attribute('href')
+		print url
+		print title
 		try:
-			if self.driver.getPageSource().contains(title):
+			if title in screw_pdfs.convert_pdf_to_txt(url):
+				print screw_pdfs.convert_pdf_to_txt(url)
 				docstatus = link.text + " is linking to the correct document."
 			else:
 				docstatus = link.text + " is not linking to the correct document."
@@ -73,8 +78,9 @@ class LinkTests(object):
 
 
 	def SameWindow(self,link,title):
+		url = link.get_attribute('href')
 		try:
-			if self.driver.getPageSource().contains(title):
+			if title in screw_pdfs.convert_pdf_to_txt(url):
 				docstatus = link.text + " is linking to the correct document."
 				print docstatus
 				self.driver.back()
