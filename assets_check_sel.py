@@ -108,12 +108,6 @@ class LinkTests(object):
 		select.select_by_visible_text("Executive")
 		self.driver.find_element_by_link_text('Submit').click()
 
-<a type="button" value="Submit" class="clsFormButtonFancy zift_button" href="?zPage=asset34assetget126wpdatadrivendecisionse-dd4e098e&amp;sid=fd196d5bdfab22c521eb309a3112ab66" style="text-decoration: none;" title="asset_34_asset_get_1_26_wpdatadrivendecisionsen_urlsuccess" zstepid="asset34assetget126wpdatadrivendecisionse-dd4e098e" onclick="zPanel76cd5.gotoPage('zPage','asset34assetget126wpdatadrivendecisionse-dd4e098e',this, true,false,null,null); return false;"><button class="clsFormButtonFancy" style="">Submit</button></a>
-
-http://demos.ziftsolutions.com/sample/InnovativeTechnology/?a=qlik&wid=ff808181569b6fc10156a08e41a334b7?zPage=asset34assetget126wpdatadrivendecisionse-dd4e098e&amp;sid=fd196d5bdfab22c521eb309a3112ab66?zstepid=asset34assetget126wpdatadrivendecisionse-dd4e098e
-
-
-
 
 
 
