@@ -1,7 +1,7 @@
 import os
 import sys
 import time
-import screw_pdfs
+from screw_pdfs import convert_pdf_to_txt
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,6 +10,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from urllib2 import urlopen
+
+#handle redirects - search in code for zStep attached to asset and href="#" only
+#videos can have zStep
 
 class LinkTests(object):
 
@@ -29,16 +32,16 @@ class LinkTests(object):
 
 	def WhitePaper(self):
 		self.driver.get(self.url)
-		element = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.NAME, "Panel Scripts")))
+		WebDriverWait(self.driver,5)
 		wp_links = self.driver.find_elements_by_partial_link_text('White Paper: ')
 		for link in wp_links:
 			if not self.GateTest(link):
 				if "_blank" in link.get_attribute("target"):
-					title = link.text[22:]
+					title = link.text[22:].encode('ascii','ignore')
 					link.click()
-					self.NewTab(link,title,self.url)
+					self.NewTab(link,title)
 				else:
-					title = link.text[22:]
+					title = link.text[22:].encode('ascii','ignore')
 					link.click()
 					self.SameWindow(link,title)
 			else:
@@ -46,29 +49,26 @@ class LinkTests(object):
 			if self.GateTest(link):
 				title = link.text[22:].encode('ascii','ignore')
 				link.click()
-				#print "This {0} is gated".format(link.text.encode('ascii', 'ignore'))
-				self.FormFill()
 				WebDriverWait(self.driver,5)
+				self.FormFill()
+				element = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, "http://static.ziftsolutions.com/files")))
 				wp_links = self.driver.find_elements_by_partial_link_text('White Paper: ')
 				for link in wp_links:
 					if "_blank" in link.get_attribute("target"):
-						title = link.text[22:]
+						title = link.text[22:].encode('ascii','ignore')
 						link.click()
-						self.NewTab(link,title,self.url)
-						self.driver.execute_script("window.open(" + self.url + ");")
-						WebDriverWait(self.driver,5)
+						self.NewTab(link,title)
+						#self.driver.execute_script("window.open(" + self.url + ");")
+						#WebDriverWait(self.driver,5)
 					else:
-						title = link.text[22:]
+						title = link.text[22:].encode('ascii','ignore')
 						link.click()
 						self.SameWindow(link,title)
 
-	def NewTab(self,link,title,url):
+	def NewTab(self,link,title):
 		url = link.get_attribute('href')
-		print url
-		print title
 		try:
-			if title in screw_pdfs.convert_pdf_to_txt(url):
-				print screw_pdfs.convert_pdf_to_txt(url)
+			if title in convert_pdf_to_txt(url):
 				docstatus = link.text + " is linking to the correct document."
 			else:
 				docstatus = link.text + " is not linking to the correct document."
@@ -80,7 +80,7 @@ class LinkTests(object):
 	def SameWindow(self,link,title):
 		url = link.get_attribute('href')
 		try:
-			if title in screw_pdfs.convert_pdf_to_txt(url):
+			if title in convert_pdf_to_txt(url):
 				docstatus = link.text + " is linking to the correct document."
 				print docstatus
 				self.driver.back()
@@ -90,6 +90,7 @@ class LinkTests(object):
 				self.driver.back()
 		except:
 			print "Oops, I failed with " + link.text
+
 
 	def FormFill(self):
 		self.driver.find_element_by_id("firstname").send_keys("gwen")
@@ -107,6 +108,9 @@ class LinkTests(object):
 		select.select_by_visible_text("Executive")
 		self.driver.find_element_by_link_text('Submit').click()
 
+<a type="button" value="Submit" class="clsFormButtonFancy zift_button" href="?zPage=asset34assetget126wpdatadrivendecisionse-dd4e098e&amp;sid=fd196d5bdfab22c521eb309a3112ab66" style="text-decoration: none;" title="asset_34_asset_get_1_26_wpdatadrivendecisionsen_urlsuccess" zstepid="asset34assetget126wpdatadrivendecisionse-dd4e098e" onclick="zPanel76cd5.gotoPage('zPage','asset34assetget126wpdatadrivendecisionse-dd4e098e',this, true,false,null,null); return false;"><button class="clsFormButtonFancy" style="">Submit</button></a>
+
+http://demos.ziftsolutions.com/sample/InnovativeTechnology/?a=qlik&wid=ff808181569b6fc10156a08e41a334b7?zPage=asset34assetget126wpdatadrivendecisionse-dd4e098e&amp;sid=fd196d5bdfab22c521eb309a3112ab66?zstepid=asset34assetget126wpdatadrivendecisionse-dd4e098e
 
 
 
