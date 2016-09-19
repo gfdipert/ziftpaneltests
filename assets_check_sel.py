@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import string
 from random import randint
 from screw_pdfs import convert_pdf_to_txt
 from selenium import webdriver
@@ -41,9 +42,12 @@ class LinkTests(object):
 
 	def PDFTextCheck(self,link):
 		url = link.get_attribute('href')
-		titlelist = (link.text.encode('ascii','ignore')).split()
-		i = randint(0,len(titlelist)-1)
-		title = titlelist[i] + " " + titlelist[i+1] + " " + titlelist[i+2]
+		titlestring = link.text.encode('ascii','ignore')
+		exclude = set(string.punctuation)
+		nopunc = ''.join(ch for ch in titlestring if ch not in exclude)
+		titlelist = nopunc.split(" ")
+		i = randint(0,len(titlelist)-4)
+		title = titlelist[i] + " " + titlelist[i+1]
 		print title
 		try:
 			if title in convert_pdf_to_txt(url):
@@ -54,7 +58,6 @@ class LinkTests(object):
 		except Exception as e:
 			print "Oops I failed with " + link.text
 
-	"""
 	def SameWindow(self,link,title):
 		url = link.get_attribute('href')
 		try:
@@ -69,8 +72,6 @@ class LinkTests(object):
 		except Exception as e:
 			print "Oops, I failed with " + link.text
 			print e
-	"""
-
 
 	def FormFill(self):
 		self.driver.find_element_by_id("firstname").send_keys("gwen")
