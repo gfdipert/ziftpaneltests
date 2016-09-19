@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+from random import randint
 from screw_pdfs import convert_pdf_to_txt
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -30,53 +31,30 @@ class LinkTests(object):
 	def Close(self):
 		self.driver.close()
 
-	def WhitePaper(self):
+	def PDF(self):
 		self.driver.get(self.url)
 		WebDriverWait(self.driver,5)
-		wp_links = self.driver.find_elements_by_partial_link_text('White Paper: ')
-		for link in wp_links:
-			if not self.GateTest(link):
-				if "_blank" in link.get_attribute("target"):
-					title = link.text[22:].encode('ascii','ignore')
-					link.click()
-					self.NewTab(link,title)
-				else:
-					title = link.text[22:].encode('ascii','ignore')
-					link.click()
-					self.SameWindow(link,title)
-			else:
-				pass
-			if self.GateTest(link):
-				title = link.text[22:].encode('ascii','ignore')
-				link.click()
-				WebDriverWait(self.driver,5)
-				self.FormFill()
-				element = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, "http://static.ziftsolutions.com/files")))
-				wp_links = self.driver.find_elements_by_partial_link_text('White Paper: ')
-				for link in wp_links:
-					if "_blank" in link.get_attribute("target"):
-						title = link.text[22:].encode('ascii','ignore')
-						link.click()
-						self.NewTab(link,title)
-						#self.driver.execute_script("window.open(" + self.url + ");")
-						#WebDriverWait(self.driver,5)
-					else:
-						title = link.text[22:].encode('ascii','ignore')
-						link.click()
-						self.SameWindow(link,title)
+		#ungated PDF
+		links = self.driver.find_elements_by_xpath("//li[@class='clsSVAssetType_application_pdf']/a")
+		for link in links:
+			self.PDFTextCheck(link)
 
-	def NewTab(self,link,title):
+	def PDFTextCheck(self,link):
 		url = link.get_attribute('href')
+		titlelist = (link.text.encode('ascii','ignore')).split()
+		i = randint(0,len(titlelist)-1)
+		title = titlelist[i] + " " + titlelist[i+1] + " " + titlelist[i+2]
+		print title
 		try:
 			if title in convert_pdf_to_txt(url):
 				docstatus = link.text + " is linking to the correct document."
 			else:
 				docstatus = link.text + " is not linking to the correct document."
 			print docstatus
-		except:
+		except Exception as e:
 			print "Oops I failed with " + link.text
 
-
+	"""
 	def SameWindow(self,link,title):
 		url = link.get_attribute('href')
 		try:
@@ -88,8 +66,10 @@ class LinkTests(object):
 				docstatus = link.text + " is not linking to the correct document."
 				print docstatus
 				self.driver.back()
-		except:
+		except Exception as e:
 			print "Oops, I failed with " + link.text
+			print e
+	"""
 
 
 	def FormFill(self):
