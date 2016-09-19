@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import string
+import requests
 from random import randint
 from screw_pdfs import convert_pdf_to_txt
 from selenium import webdriver
@@ -36,9 +37,20 @@ class LinkTests(object):
 		self.driver.get(self.url)
 		WebDriverWait(self.driver,5)
 		#ungated PDF
-		links = self.driver.find_elements_by_xpath("//li[@class='clsSVAssetType_application_pdf']/a")
-		for link in links:
-			self.PDFTextCheck(link)
+		svlinks = self.driver.find_elements_by_xpath("//li[@class='clsSVAssetType_application_pdf']/a")
+		zlinks = self.driver.find_elements_by_tag_name('a')
+		for svlink in svlinks:
+			self.PDFTextCheck(svlink)
+		for zlink in zlinks:
+			if 'pdf' in zlink.get_attribute('href'):
+				r = requests.get(zlink.get_attribute('href'))
+				status = r.status_code
+				if status == 200:
+					print "{0} was successful".format(zlink.text.encode('ascii','ignore'))
+				else:
+					print "{0} FAILED WITH STATUS CODE {1}".format(zlink.text.encode('ascii','ignore'), status)
+			else:
+				pass
 
 	def PDFTextCheck(self,link):
 		url = link.get_attribute('href')
@@ -46,9 +58,8 @@ class LinkTests(object):
 		exclude = set(string.punctuation)
 		nopunc = ''.join(ch for ch in titlestring if ch not in exclude)
 		titlelist = nopunc.split(" ")
-		i = randint(0,len(titlelist)-4)
+		i = randint(0,len(titlelist)-3)
 		title = titlelist[i] + " " + titlelist[i+1]
-		print title
 		try:
 			if title in convert_pdf_to_txt(url):
 				docstatus = link.text + " is linking to the correct document."

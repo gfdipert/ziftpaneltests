@@ -6,7 +6,7 @@ if sys.platform == 'win32':
     win_unicode_console.enable() 
     #needed for windows because windows is stupid
 
-test = LinkTests("http://demos.ziftsolutions.com/sample/InnovativeTechnology/?a=qlik&wid=ff808181569b6fc10156a08e41a334b7&zPage=resources-d1ef094d")
+test = LinkTests("http://sites.ziftsolutions.com/solid_state_solution38870/d3a6593b/EMC_Showcase_en?zPage=Hybrid-Cloud-68a5010d")
 test.PDF()
 
 """
