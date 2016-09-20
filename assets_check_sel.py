@@ -43,14 +43,9 @@ class LinkTests(object):
 			self.PDFTextCheck(svlink)
 		for zlink in zlinks:
 			if 'pdf' in zlink.get_attribute('href'):
-				r = requests.get(zlink.get_attribute('href'))
-				status = r.status_code
-				if status == 200:
-					print "{0} was successful".format(zlink.text.encode('ascii','ignore'))
-				else:
-					print "{0} FAILED WITH STATUS CODE {1}".format(zlink.text.encode('ascii','ignore'), status)
+				self.PDFTextCheck(zlink)	
 			else:
-				pass
+				pass		
 
 	def PDFTextCheck(self,link):
 		url = link.get_attribute('href')
@@ -61,13 +56,19 @@ class LinkTests(object):
 		i = randint(0,len(titlelist)-3)
 		title = titlelist[i] + " " + titlelist[i+1]
 		try:
-			if title in convert_pdf_to_txt(url):
+			if nopunc in convert_pdf_to_txt(url):
 				docstatus = link.text + " is linking to the correct document."
 			else:
-				docstatus = link.text + " is not linking to the correct document."
+				r = requests.get(url)
+				status = r.status_code
+				if status == 200:
+					docstatus = "{0} was successful, though I couldn't find the title in this document.".format(zlink.text.encode('ascii','ignore'))
+				else:
+					pass
 			print docstatus
 		except Exception as e:
 			print "Oops I failed with " + link.text
+			print e
 
 	def SameWindow(self,link,title):
 		url = link.get_attribute('href')
