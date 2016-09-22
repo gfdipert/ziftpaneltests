@@ -42,33 +42,38 @@ class LinkTests(object):
 		for svlink in svlinks:
 			self.PDFTextCheck(svlink)
 		for zlink in zlinks:
-			if 'pdf' in zlink.get_attribute('href'):
-				self.PDFTextCheck(zlink)	
-			else:
-				pass		
+			try:
+				if 'pdf' in zlink.get_attribute('href'):
+					self.PDFTextCheck(zlink)	
+				else:
+					pass
+			except:
+				pass
 
 	def PDFTextCheck(self,link):
 		url = link.get_attribute('href')
 		titlestring = link.text.encode('ascii','ignore')
-		exclude = set(string.punctuation)
-		nopunc = ''.join(ch for ch in titlestring if ch not in exclude)
-		titlelist = nopunc.split(" ")
-		i = randint(0,len(titlelist)-3)
-		title = titlelist[i] + " " + titlelist[i+1]
+		#exclude = set(string.punctuation)
+		#nopunc = ''.join(ch for ch in titlestring if ch not in exclude)
+		#titlelist = nopunc.split(" ")
+		#i = randint(0,len(titlelist)-3)
+		#title = titlelist[i] + " " + titlelist[i+1]
 		try:
-			if nopunc in convert_pdf_to_txt(url):
-				docstatus = link.text + " is linking to the correct document."
+			r = requests.get(url)
+			status = r.status_code
+			if status == 200:
+				try:
+					if titlestring in convert_pdf_to_txt(url):
+						docstatus = "{0} is linking to the correct document.".format(titlestring)
+					else:
+						docstatus = "{0} is working fine but I can't find the title.".format(titlestring)
+				except:
+					docstatus = "I can't read {0}, but the link is working.".format(titlestring)
 			else:
-				r = requests.get(url)
-				status = r.status_code
-				if status == 200:
-					docstatus = "{0} was successful, though I couldn't find the title in this document.".format(zlink.text.encode('ascii','ignore'))
-				else:
-					pass
-			print docstatus
-		except Exception as e:
-			print "Oops I failed with " + link.text
-			print e
+				docstatus = "{0} FAILED WITH STATUS CODE {1}".format(titlestring, status)
+		except:
+			docstatus = "{0} FAILED because the domain name isn't valid".format(titlestring)
+		print docstatus
 
 	def SameWindow(self,link,title):
 		url = link.get_attribute('href')
