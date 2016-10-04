@@ -30,31 +30,42 @@ class LinkTests(object):
 		if '?zPage=' in link.get_attribute("href"):
 				return True
 
+	def GetPDFURL(self,link):
+		link.click()
+		submit = self.driver.find_element_by_link_text('Submit')
+		step = submit.get_attribute('href').split('?')
+		current = self.driver.current_url.split('?')
+		page = current[0] + "?" + step[1]
+		self.driver.get(page)
+		WebDriverWait(self.driver,5)
+		links = self.driver.find_elements_by_tag_name('a')
+		for link in links:
+			if "pdf" in link.get_attribute('href'):
+				return page
+			else:
+				print "There's no PDF link on this page!"
+
 	def Close(self):
 		self.driver.close()
 
 	def PDF(self):
 		self.driver.get(self.url)
-		WebDriverWait(self.driver,5)
-		#ungated PDF
+		WebDriverWait(self.driver,10)
 		svlinks = self.driver.find_elements_by_xpath("//li[@class='clsSVAssetType_application_pdf']/a")
 		zlinks = self.driver.find_elements_by_tag_name('a')
 		for svlink in svlinks:
 			self.PDFTextCheck(svlink)
 		for zlink in zlinks:
-			try:
-				if GateTest(zlink):
-					zlink.click()
-					submit = find_element_by_link_text('Submit')
-					step = submit.get_attribute('href')
-					current = self.driver.current_url
-					sep = current.split('?')
-					page = sep[0] + "?" + step
-					self.driver.get(page)
-					self.PDFTextCheck(page)	
-				else:
+			if "Resource" in zlink.get_attribute('title'):
+				try:
+					if self.GateTest(zlink):
+						self.GetPDFURL(zlink)
+						self.PDFTextCheck(page)
+					else:
+						pass
+				except Exception as e:
 					pass
-			except:
+			else:
 				pass
 
 	def PDFTextCheck(self,link):
