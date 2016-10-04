@@ -43,8 +43,15 @@ class LinkTests(object):
 			self.PDFTextCheck(svlink)
 		for zlink in zlinks:
 			try:
-				if 'pdf' in zlink.get_attribute('href'):
-					self.PDFTextCheck(zlink)	
+				if GateTest(zlink):
+					zlink.click()
+					submit = find_element_by_link_text('Submit')
+					step = submit.get_attribute('href')
+					current = self.driver.current_url
+					sep = current.split('?')
+					page = sep[0] + "?" + step
+					self.driver.get(page)
+					self.PDFTextCheck(page)	
 				else:
 					pass
 			except:
@@ -56,8 +63,6 @@ class LinkTests(object):
 		#exclude = set(string.punctuation)
 		#nopunc = ''.join(ch for ch in titlestring if ch not in exclude)
 		#titlelist = nopunc.split(" ")
-		#i = randint(0,len(titlelist)-3)
-		#title = titlelist[i] + " " + titlelist[i+1]
 		try:
 			r = requests.get(url)
 			status = r.status_code
@@ -70,7 +75,7 @@ class LinkTests(object):
 				except:
 					docstatus = "I can't read {0}, but the link is working.".format(titlestring)
 			else:
-				docstatus = "{0} FAILED WITH STATUS CODE {1}".format(titlestring, status)
+				docstatus = "{0} failed with status code {1}".format(titlestring, status)
 		except:
 			docstatus = "{0} FAILED because the domain name isn't valid".format(titlestring)
 		print docstatus
