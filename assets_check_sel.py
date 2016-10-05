@@ -40,10 +40,16 @@ class LinkTests(object):
 		WebDriverWait(self.driver,5)
 		links = self.driver.find_elements_by_tag_name('a')
 		for link in links:
-			if "pdf" in link.get_attribute('href'):
-				return page
-			else:
-				print "There's no PDF link on this page!"
+			try:
+				if "pdf" in link.get_attribute('href'):
+					try:
+						self.PDFTextCheck(link)
+					except:
+						pass
+				else:
+					print "There's no PDF link on this page!"
+			except:
+				pass
 
 	def Close(self):
 		self.driver.close()
@@ -56,16 +62,17 @@ class LinkTests(object):
 		for svlink in svlinks:
 			self.PDFTextCheck(svlink)
 		for zlink in zlinks:
-			if "Resource" in zlink.get_attribute('title'):
-				try:
-					if self.GateTest(zlink):
-						self.GetPDFURL(zlink)
-						self.PDFTextCheck(page)
-					else:
+			try:
+				if 'pdf' in zlink.get_attribute('href'):
+					try:
+						self.PDFTextCheck(zlink)
+					except:
 						pass
-				except Exception as e:
+				elif self.GateTest(zlink):
+					self.GetPDFURL
+				else:
 					pass
-			else:
+			except:
 				pass
 
 	def PDFTextCheck(self,link):
