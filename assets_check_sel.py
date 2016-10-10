@@ -32,11 +32,9 @@ class LinkTests(object):
 				return True
 
 	def GetPDFURL(self,link):
-		current = self.driver.current_url.split('?')
 		formbit = link.get_attribute('href').split('?')
-		formpage = current[0] + "?" + formbit[1]
-		self.driver.link.send_keys(Keys.CONTROL + 't')
-		self.driver.get(formpage)
+		formpage = self.driver.current_url.split('#')[0] + "?" + formbit[1]
+		self.driver.execute_script('''window.open({0},"_blank");''').format(formpage)
 		submit = self.driver.find_element_by_link_text('Submit')
 		step = submit.get_attribute('href').split('?')
 		current = self.driver.current_url.split('?')
