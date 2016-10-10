@@ -25,13 +25,18 @@ class LinkTests(object):
 		os.environ["webdriver.chrome.driver"] = chromedriver
 		self.driver = webdriver.Chrome(chromedriver)
 		self.driver.get(url)
+		self.handle = self.driver.current_window_handle
 
 	def GateTest(self,link):
 		if '?zPage=' in link.get_attribute("href"):
 				return True
 
 	def GetPDFURL(self,link):
-		link.click()
+		current = self.driver.current_url.split('?')
+		formbit = link.get_attribute('href').split('?')
+		formpage = current[0] + "?" + formbit[1]
+		self.driver.link.send_keys(Keys.CONTROL + 't')
+		self.driver.get(formpage)
 		submit = self.driver.find_element_by_link_text('Submit')
 		step = submit.get_attribute('href').split('?')
 		current = self.driver.current_url.split('?')
@@ -41,7 +46,7 @@ class LinkTests(object):
 		links = self.driver.find_elements_by_tag_name('a')
 		for link in links:
 			if "pdf" not in link.get_attribute('href'):
-				PDFstatus = "There are no PDF links on this page!"
+				PDFstatus = "There are no PDF links on this page: " + self.driver.current_url
 			elif "pdf" in link.get_attribute('href'):
 				PDFstatus = ""
 				try:
@@ -52,6 +57,8 @@ class LinkTests(object):
 				pass
 		if PDFstatus != "":
 			print PDFstatus
+		self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + 'w')
+		self.driver.switch_to_window(self.handle)
 
 	def Close(self):
 		self.driver.close()
@@ -70,7 +77,7 @@ class LinkTests(object):
 						self.PDFTextCheck(zlink)
 					except:
 						pass
-				if self.GateTest(zlink):
+				elif self.GateTest(zlink):
 					self.GetPDFURL(zlink)
 				else:
 					pass

@@ -21,4 +21,7 @@ http://sites.ziftsolutions.com/rad_software_ltd/ad332d88/Epicor_ERP_Microsite#pr
 
 Ungated PDFS with Vimeo videos
 http://sites.ziftsolutions.com/dmd_data_systems/f6dc4900/Product_Showcase_EN?zPage=Cloud-86b41614
+
+Tab management
+https://gist.github.com/lrhache/7686903
 """
