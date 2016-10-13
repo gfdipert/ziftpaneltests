@@ -34,7 +34,8 @@ class LinkTests(object):
 	def GetPDFURL(self,link):
 		formbit = link.get_attribute('href').split('?')
 		formpage = self.driver.current_url.split('#')[0] + "?" + formbit[1]
-		self.driver.execute_script('''window.open({0},"_blank");''').format(formpage)
+		self.driver.execute_script('''window.open("about:blank", "_blank");''')
+		self.driver.get(formpage)
 		submit = self.driver.find_element_by_link_text('Submit')
 		step = submit.get_attribute('href').split('?')
 		current = self.driver.current_url.split('?')
@@ -43,20 +44,18 @@ class LinkTests(object):
 		WebDriverWait(self.driver,5)
 		links = self.driver.find_elements_by_tag_name('a')
 		for link in links:
-			if "pdf" not in link.get_attribute('href'):
-				PDFstatus = "There are no PDF links on this page: " + self.driver.current_url
-			elif "pdf" in link.get_attribute('href'):
-				PDFstatus = ""
+			if "pdf" in link.get_attribute('href'):
 				try:
 					self.PDFTextCheck(link)
 				except:
 					pass
+			elif "pdf" not in link.get_attribute('href'):
+				PDFstatus = "There are no PDFs on this page: " + formpage
 			else:
 				pass
 		if PDFstatus != "":
 			print PDFstatus
 		self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + 'w')
-		self.driver.switch_to_window(self.handle)
 
 	def Close(self):
 		self.driver.close()
@@ -64,10 +63,15 @@ class LinkTests(object):
 	def PDF(self):
 		self.driver.get(self.url)
 		WebDriverWait(self.driver,10)
-		svlinks = self.driver.find_elements_by_xpath("//li[@class='clsSVAssetType_application_pdf']/a")
+		svlinksp = []
+		svparents = self.driver.find_elements_by_tag_name('li')
+		for svparent in svparents:
+			if "clsSVAssetType_application_pdf" in svparent.get_attribute('class'):
+				svlink = svparent.find_element_by_tag_name('a')
+				self.PDFTextCheck(svlink)
+			else:
+				pass
 		zlinks = self.driver.find_elements_by_tag_name('a')
-		for svlink in svlinks:
-			self.PDFTextCheck(svlink)
 		for zlink in zlinks:
 			try:
 				if 'pdf' in zlink.get_attribute('href'):
@@ -85,6 +89,7 @@ class LinkTests(object):
 	def PDFTextCheck(self,link):
 		url = link.get_attribute('href')
 		titlestring = link.text.encode('ascii','ignore')
+		titletest = titlestring[:4]
 		#exclude = set(string.punctuation)
 		#nopunc = ''.join(ch for ch in titlestring if ch not in exclude)
 		#titlelist = nopunc.split(" ")
@@ -93,7 +98,7 @@ class LinkTests(object):
 			status = r.status_code
 			if status == 200:
 				try:
-					if titlestring in convert_pdf_to_txt(url):
+					if titletest in convert_pdf_to_txt(url):
 						docstatus = "{0} is linking to the correct document.".format(titlestring)
 					else:
 						docstatus = "{0} is working fine but I can't find the title.".format(titlestring)
