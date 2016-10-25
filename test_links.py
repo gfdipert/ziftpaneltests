@@ -6,7 +6,7 @@ if sys.platform == 'win32':
     win_unicode_console.enable() 
     #needed for windows because windows is stupid
 
-test = LinkTests("http://demos.ziftsolutions.com/sample/InnovativeTechnology/?a=verizon&wid=0000000057a40d600157ba014f310317&zPage=resources-c0b4566c")
+test = LinkTests("http://sites.ziftsolutions.com/rad_software_ltd/ad332d88/Epicor_ERP_Microsite#principle_1")
 test.PDF()
 
 """
@@ -18,8 +18,13 @@ http://demos.ziftsolutions.com/sample/InnovativeTechnology/?a=verizon&wid=000000
 PDFS without form
 http://sites.ziftsolutions.com/solid_state_solution38870/d3a6593b/EMC_Showcase_en?zPage=Hybrid-Cloud-68a5010d
 
-PDFS with form - Epicor is unique
+PDFS with form
+
+Epicor (unique case)
 http://sites.ziftsolutions.com/rad_software_ltd/ad332d88/Epicor_ERP_Microsite#principle_1
+
+PDFS with form in Modal
+http://samples.zift123.com/?aa=emc.ziftsolutions.com&wid=ff808181578b4a7b01579165a4d133a8&zPage=VNX-672a010a
 
 More examples:
 VMWare
@@ -36,4 +41,7 @@ http://sites.ziftsolutions.com/dmd_data_systems/f6dc4900/Product_Showcase_EN?zPa
 
 Tab management
 https://gist.github.com/lrhache/7686903
+
+If node exists
+http://stackoverflow.com/questions/767851/xpath-find-if-node-exists
 """

@@ -31,11 +31,15 @@ class LinkTests(object):
 		if '?zPage=' in link.get_attribute("href"):
 				return True
 
+
+
 	def GetPDFURL(self,link):
 		formbit = link.get_attribute('href').split('?')
 		formpage = self.driver.current_url.split('#')[0] + "?" + formbit[1]
-		self.driver.execute_script('''window.open("about:blank", "_blank");''')
-		self.driver.get(formpage)
+		script = '''window.open("{0}", "_blank");'''.format(formpage)
+		self.driver.execute_script(script)
+
+	def PDFFormSubmit(self)
 		submit = self.driver.find_element_by_link_text('Submit')
 		step = submit.get_attribute('href').split('?')
 		current = self.driver.current_url.split('?')
@@ -55,7 +59,6 @@ class LinkTests(object):
 				pass
 		if PDFstatus != "":
 			print PDFstatus
-		self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + 'w')
 
 	def Close(self):
 		self.driver.close()
@@ -63,7 +66,6 @@ class LinkTests(object):
 	def PDF(self):
 		self.driver.get(self.url)
 		WebDriverWait(self.driver,10)
-		svlinksp = []
 		svparents = self.driver.find_elements_by_tag_name('li')
 		for svparent in svparents:
 			if "clsSVAssetType_application_pdf" in svparent.get_attribute('class'):
@@ -85,14 +87,18 @@ class LinkTests(object):
 					pass
 			except:
 				pass
+		windows = self.driver.window_handles
+		newwindows = len(self.driver.window_handles) - 1
+		i = 0
+		for i <= newwindows:
+			driver.switch_to_window(windows[i])
+			PDFFormSubmit(self)
+			i + 1
 
 	def PDFTextCheck(self,link):
 		url = link.get_attribute('href')
 		titlestring = link.text.encode('ascii','ignore')
 		titletest = titlestring[:4]
-		#exclude = set(string.punctuation)
-		#nopunc = ''.join(ch for ch in titlestring if ch not in exclude)
-		#titlelist = nopunc.split(" ")
 		try:
 			r = requests.get(url)
 			status = r.status_code
@@ -109,21 +115,6 @@ class LinkTests(object):
 		except:
 			docstatus = "{0} FAILED because the domain name isn't valid".format(titlestring)
 		print docstatus
-
-	def SameWindow(self,link,title):
-		url = link.get_attribute('href')
-		try:
-			if title in convert_pdf_to_txt(url):
-				docstatus = link.text + " is linking to the correct document."
-				print docstatus
-				self.driver.back()
-			else:
-				docstatus = link.text + " is not linking to the correct document."
-				print docstatus
-				self.driver.back()
-		except Exception as e:
-			print "Oops, I failed with " + link.text
-			print e
 
 	def FormFill(self):
 		self.driver.find_element_by_id("firstname").send_keys("gwen")
