@@ -1,21 +1,15 @@
 import os
 import sys
 import time
-import string
 import requests
-from random import randint
 from screw_pdfs import convert_pdf_to_txt
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from urllib2 import urlopen
-
-#handle redirects - search in code for zStep attached to asset and href="#" only
-#videos can have zStep
 
 class LinkTests(object):
 
@@ -30,8 +24,6 @@ class LinkTests(object):
 	def GateTest(self,link):
 		if '?zPage=' in link.get_attribute("href"):
 				return True
-
-
 
 	def GetPDFURL(self,link):
 		formbit = link.get_attribute('href').split('?')
