@@ -13,6 +13,9 @@ from urllib2 import urlopen
 
 class LinkTests(object):
 
+	global PDFpages
+	PDFpages = []
+
 	def __init__(self,url):
 		self.url = url
 		chromedriver = "C:\Users\Gwen Dipert\Documents\chromedriver.exe"
@@ -28,10 +31,17 @@ class LinkTests(object):
 	def GetPDFURL(self,link):
 		formbit = link.get_attribute('href').split('?')
 		formpage = self.driver.current_url.split('#')[0] + "?" + formbit[1]
-		script = '''window.open("{0}", "_blank");'''.format(formpage)
-		self.driver.execute_script(script)
+		if formpage not in PDFpages:
+			PDFpages.append(formpage)
+			script = '''window.open("{0}", "_blank");'''.format(formpage)
+			self.driver.execute_script(script)
+		else:
+			return
 
-	def PDFFormSubmit(self)
+	def PDFFormSubmit(self):
+		element = WebDriverWait(self.driver,10).until(EC.presence_of_element_located((By.LINK_TEXT,"Submit")))
+		formpage = self.driver.current_url
+		print formpage
 		submit = self.driver.find_element_by_link_text('Submit')
 		step = submit.get_attribute('href').split('?')
 		current = self.driver.current_url.split('?')
@@ -39,18 +49,19 @@ class LinkTests(object):
 		self.driver.get(page)
 		WebDriverWait(self.driver,5)
 		links = self.driver.find_elements_by_tag_name('a')
+		PDFstatus = ""
 		for link in links:
-			if "pdf" in link.get_attribute('href'):
+			href = link.get_attribute('href')
+			if "pdf" in href:
 				try:
 					self.PDFTextCheck(link)
+					PDFstatus = "PDFSPRESENT"
 				except:
 					pass
-			elif "pdf" not in link.get_attribute('href'):
-				PDFstatus = "There are no PDFs on this page: " + formpage
 			else:
 				pass
-		if PDFstatus != "":
-			print PDFstatus
+		if PDFstatus == "":
+			print "There are no PDFs on this page."
 
 	def Close(self):
 		self.driver.close()
@@ -80,12 +91,18 @@ class LinkTests(object):
 			except:
 				pass
 		windows = self.driver.window_handles
-		newwindows = len(self.driver.window_handles) - 1
-		i = 0
-		for i <= newwindows:
-			driver.switch_to_window(windows[i])
-			PDFFormSubmit(self)
-			i + 1
+		numwindows = len(self.driver.window_handles)
+		print numwindows
+		i = 1
+		self.driver.switch_to_window(windows[1])
+		while i < numwindows:
+			self.PDFFormSubmit()
+			i += 1
+			if i == numwindows:
+				pass
+			else:
+				self.driver.switch_to_window(windows[i])
+
 
 	def PDFTextCheck(self,link):
 		url = link.get_attribute('href')
