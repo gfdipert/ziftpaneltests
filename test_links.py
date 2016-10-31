@@ -6,7 +6,7 @@ if sys.platform == 'win32':
     win_unicode_console.enable() 
     #needed for windows because windows is stupid
 
-test = LinkTests("http://samples.zift123.com/?aa=dell.ziftsolutions.com&wid=ff80818157e29ef001580189791a6da9&zPage=Resources-126c5928")
+test = LinkTests("http://samples.zift123.com/?aa=vmware.ziftsolutions.com&wid=0000000057536d62015767a5d7755bbd&zPage=vRealize-Log-Insight-bd041a5d")
 test.PDF()
 
 """
@@ -16,17 +16,25 @@ PDFS on SV migrated site
 	http://demos.ziftsolutions.com/sample/InnovativeTechnology/?a=verizon&wid=0000000057a40d600157ba014f310317&zPage=resources-c0b4566c
 
 PDFS without form
-	http://sites.ziftsolutions.com/solid_state_solution38870/d3a6593b/EMC_Showcase_en?zPage=Hybrid-Cloud-68a5010d
+
+	EMC
+	http://sites.ziftsolutions.com/solid_state_solution38870/d3a6593b/EMC_Showcase_en?zPage=Hybrid-Cloud-68a5010d - Works, for the most part.  Doesn't ignore breadcrumb links.
+
+	Dell APJ
+	http://samples.zift123.com/?aa=dell.ziftsolutions.com&wid=ff80818157e29ef001580189791a6da9&zPage=Resources-126c5928 - WORKS!
 
 PDFS with form
 	Epicor (unique case)
-	http://sites.ziftsolutions.com/rad_software_ltd/ad332d88/Epicor_ERP_Microsite#principle_1
+	http://sites.ziftsolutions.com/rad_software_ltd/ad332d88/Epicor_ERP_Microsite#principle_1 - WORKS!
+
+	VMware
+	hhttp://samples.zift123.com/?aa=vmware.ziftsolutions.com&wid=0000000057536d62015767a5d7755bbd&zPage=Try-VMware-56310845
 	
 PDFS with form in Modal
 	http://samples.zift123.com/?aa=emc.ziftsolutions.com&wid=ff808181578b4a7b01579165a4d133a8&zPage=VNX-672a010a
 
 More examples:
-VMWare
+
 EMC
 Red Hat
 CAT
