@@ -47,6 +47,4 @@ Additional cases:
 - handle redirects - search in code for zStep attached to asset and href="#" only
 - videos can have zStep
 
-navs = self.driver.find_elements_by_xpath(".//*[ancestor::div[@class='z_nav']]")
-
 """
