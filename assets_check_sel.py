@@ -76,7 +76,12 @@ class LinkTests(object):
 				self.PDFTextCheck(svlink)
 			else:
 				pass
-		zlinks = self.driver.find_elements_by_tag_name('a')
+		links = self.driver.find_elements_by_tag_name('a')
+		navs = self.driver.find_elements_by_xpath(".//*[ancestor::div[@class='z_nav']]")
+		zlinks = []
+		for link in links:
+			if link not in navs:
+				zlinks.append(link)
 		for zlink in zlinks:
 			try:
 				if 'pdf' in zlink.get_attribute('href'):
@@ -85,6 +90,7 @@ class LinkTests(object):
 					except:
 						pass
 				elif self.GateTest(zlink):
+					print zlink.get_attribute('href')
 					self.GetPDFURL(zlink)
 				else:
 					pass
@@ -140,9 +146,3 @@ class LinkTests(object):
 		select = Select(self.driver.find_element_by_id("function"))
 		select.select_by_visible_text("Executive")
 		self.driver.find_element_by_link_text('Submit').click()
-
-
-
-
-
-

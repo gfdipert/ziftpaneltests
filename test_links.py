@@ -6,7 +6,7 @@ if sys.platform == 'win32':
     win_unicode_console.enable() 
     #needed for windows because windows is stupid
 
-test = LinkTests("http://sites.ziftsolutions.com/rad_software_ltd/ad332d88/Epicor_ERP_Microsite#principle_1")
+test = LinkTests("http://samples.zift123.com/?aa=dell.ziftsolutions.com&wid=ff80818157e29ef001580189791a6da9&zPage=Resources-126c5928")
 test.PDF()
 
 """
@@ -38,4 +38,7 @@ http://sites.ziftsolutions.com/dmd_data_systems/f6dc4900/Product_Showcase_EN?zPa
 Additional cases:
 - handle redirects - search in code for zStep attached to asset and href="#" only
 - videos can have zStep
+
+navs = self.driver.find_elements_by_xpath(".//*[ancestor::div[@class='z_nav']]")
+
 """
