@@ -6,7 +6,7 @@ if sys.platform == 'win32':
     win_unicode_console.enable() 
     #needed for windows because windows is stupid
 
-test = LinkTests("http://samples.zift123.com/?aa=vmware.ziftsolutions.com&wid=0000000057536d62015767a5d7755bbd&zPage=vRealize-Log-Insight-bd041a5d")
+test = LinkTests("http://samples.zift123.com/?aa=vmware.ziftsolutions.com&wid=0000000057536d62015767a5d7755bbd&zPage=Horizon-with-View-dad01a4f")
 test.PDF()
 
 """
@@ -28,7 +28,7 @@ PDFS with form
 	http://sites.ziftsolutions.com/rad_software_ltd/ad332d88/Epicor_ERP_Microsite#principle_1 - WORKS!
 
 	VMware
-	hhttp://samples.zift123.com/?aa=vmware.ziftsolutions.com&wid=0000000057536d62015767a5d7755bbd&zPage=Try-VMware-56310845
+http://samples.zift123.com/?aa=vmware.ziftsolutions.com&wid=0000000057536d62015767a5d7755bbd&zPage=Horizon-with-View-dad01a4f
 	
 PDFS with form in Modal
 	http://samples.zift123.com/?aa=emc.ziftsolutions.com&wid=ff808181578b4a7b01579165a4d133a8&zPage=VNX-672a010a
