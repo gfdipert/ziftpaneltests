@@ -6,7 +6,8 @@ if sys.platform == 'win32':
     win_unicode_console.enable() 
     #needed for windows because windows is stupid
 
-test = LinkTests("http://samples.zift123.com/?aa=vmware.ziftsolutions.com&wid=0000000057536d62015767a5d7755bbd&zPage=Horizon-with-View-dad01a4f")
+URL = raw_input('Enter URL: ')
+test = LinkTests(URL)
 test.PDF()
 
 """
@@ -46,5 +47,7 @@ http://sites.ziftsolutions.com/dmd_data_systems/f6dc4900/Product_Showcase_EN?zPa
 Additional cases:
 - handle redirects - search in code for zStep attached to asset and href="#" only
 - videos can have zStep
+
+breadcrumbs have their own class
 
 """

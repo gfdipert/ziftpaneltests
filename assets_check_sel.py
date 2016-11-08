@@ -29,7 +29,7 @@ class LinkTests(object):
 				return True
 
 	def GetPDFURL(self,link):
-		print link.get_attribute('href')
+		#print link.get_attribute('href')
 		formbit = link.get_attribute('href').split('?')
 		formpage = self.driver.current_url.split('#')[0] + "?" + formbit[1]
 		if formpage not in PDFpages:
@@ -45,8 +45,9 @@ class LinkTests(object):
 		submit = self.driver.find_element_by_link_text('Submit')
 		step = submit.get_attribute('href').split('?')
 		current = self.driver.current_url.split('?')
-		current = current.pop(len(current)-1)
+		del current[len(current)-1]
 		page = ''.join(current) + "?" + step[len(step)-1]
+		print page
 		self.driver.get(page)
 		WebDriverWait(self.driver,5)
 		links = self.driver.find_elements_by_tag_name('a')
@@ -78,47 +79,62 @@ class LinkTests(object):
 			else:
 				pass
 		links = self.driver.find_elements_by_tag_name('a')
-		#handles Dell APJ
+		navs = self.driver.find_elements_by_xpath(".//*[ancestor::div[@name='Panel Header']]")
+		contacts = self.driver.find_elements_by_xpath("//a[@title='Contact Form']")
+		policies = self.driver.find_elements_by_link_text('Privacy Policy')
+		"""
+		these are all unique solutions for ignoring links in the nav header
+		handles Dell APJ:
 		navs = []
 		divs = self.driver.find_elements_by_xpath(".//*[ancestor::div]")
 		for div in divs:
 			if 'z_nav' in div.get_attribute('class'):
 				navs.append(div)
-		contacts = self.driver.find_elements_by_xpath("//a[@title='Contact Form']")
-		#handles VMWare
+		handles Nexsan:
+		nexsans = self.driver.find_elements_by_xpath(".//*[ancestor::div[@id='idSVNav']]")
+		handles VMWare:
 		menus = self.driver.find_elements_by_xpath(".//*[ancestor::span[@name='Showcase Nav']]")
+		"""
 		zlinks = []
 		for link in links:
-			if link not in navs and link not in contacts and link not in menus:
+			if link not in navs and link not in contacts and link not in policies:
 				zlinks.append(link)
+		gated = []
 		for zlink in zlinks:
 			try:
-				if 'pdf' or 'PDF' in zlink.get_attribute('href'):
+				if self.GateTest(zlink):
+					self.GetPDFURL(zlink)
+					gated.append(zlink)
+				else:
 					try:
-						self.PDFTextCheck(zlink)
+						if 'pdf' or 'PDF' in zlink.get_attribute('href'):
+							try:
+								self.PDFTextCheck(zlink)
+							except:
+								pass
 					except:
 						pass
-				elif self.GateTest(zlink):
-					self.GetPDFURL(zlink)
-				else:
-					pass
 			except:
 				pass
 		windows = self.driver.window_handles
 		numwindows = len(self.driver.window_handles)
-		if numwindows == 1:
+		if gated == []:
 			print "No gated PDFs"
 			return
+		else:
+			pass
 		i = 1
-		self.driver.switch_to_window(windows[1])
-		while i < numwindows:
-			self.PDFFormSubmit()
-			i += 1
-			if i == numwindows:
-				pass
-			else:
-				self.driver.switch_to_window(windows[i])
-
+		if i == numwindows:
+			return
+		else:
+			self.driver.switch_to_window(windows[1])
+			while i < numwindows:
+				self.PDFFormSubmit()
+				i += 1
+				if i == numwindows:
+					pass
+				else:
+					self.driver.switch_to_window(windows[i])
 
 	def PDFTextCheck(self,link):
 		url = link.get_attribute('href')
