@@ -26,10 +26,9 @@ class LinkTests(object):
 
 	def GateTest(self,link):
 		if '?zPage=' in link.get_attribute("href"):
-				return True
+			return True
 
-	def GetPDFURL(self,link):
-		#print link.get_attribute('href')
+	def GetFormURL(self,link):
 		formbit = link.get_attribute('href').split('?')
 		formpage = self.driver.current_url.split('#')[0] + "?" + formbit[1]
 		if formpage not in PDFpages:
@@ -47,19 +46,16 @@ class LinkTests(object):
 		current = self.driver.current_url.split('?')
 		del current[len(current)-1]
 		page = ''.join(current) + "?" + step[len(step)-1]
-		print page
 		self.driver.get(page)
 		WebDriverWait(self.driver,5)
 		links = self.driver.find_elements_by_tag_name('a')
-		PDFstatus = ""
+		PDFstatus = []
 		for link in links:
-			href = link.get_attribute('href')
-			if "pdf" or 'PDF' in href:
-				try:
-					self.PDFTextCheck(link)
-					PDFstatus = "PDFSPRESENT"
-				except:
-					pass
+			href = link.get_attribute('href').encode('ascii','ignore')
+			if '.pdf' or '.PDF' in href:
+				self.PDFTextCheck(link)
+				print href
+				PDFstatus = "PDFS"
 			else:
 				pass
 		if PDFstatus == "":
@@ -82,6 +78,8 @@ class LinkTests(object):
 		navs = self.driver.find_elements_by_xpath(".//*[ancestor::div[@name='Panel Header']]")
 		contacts = self.driver.find_elements_by_xpath("//a[@title='Contact Form']")
 		policies = self.driver.find_elements_by_link_text('Privacy Policy')
+		#Epicor
+		tops = self.driver.find_elements_by_class_name('z_nav')
 		"""
 		these are all unique solutions for ignoring links in the nav header
 		handles Dell APJ:
@@ -97,35 +95,24 @@ class LinkTests(object):
 		"""
 		zlinks = []
 		for link in links:
-			if link not in navs and link not in contacts and link not in policies:
+			if link not in navs and link not in contacts and link not in policies and link not in tops:
 				zlinks.append(link)
 		gated = []
 		for zlink in zlinks:
 			try:
 				if self.GateTest(zlink):
-					self.GetPDFURL(zlink)
+					self.GetFormURL(zlink)
 					gated.append(zlink)
-				else:
-					try:
-						if 'pdf' or 'PDF' in zlink.get_attribute('href'):
-							try:
-								self.PDFTextCheck(zlink)
-							except:
-								pass
-					except:
-						pass
+				elif '.pdf' or '.PDF' in zlink.get_attribute('href'):
+					self.PDFTextCheck(zlink)
 			except:
 				pass
 		windows = self.driver.window_handles
 		numwindows = len(self.driver.window_handles)
-		if gated == []:
-			print "No gated PDFs"
-			return
-		else:
-			pass
 		i = 1
 		if i == numwindows:
 			return
+			print "No gated PDFs"
 		else:
 			self.driver.switch_to_window(windows[1])
 			while i < numwindows:
@@ -155,7 +142,7 @@ class LinkTests(object):
 				docstatus = "{0} failed with status code {1}".format(titlestring, status)
 		except:
 			docstatus = "{0} FAILED because the domain name isn't valid".format(titlestring)
-		print docstatus
+			print docstatus
 
 	def FormFill(self):
 		self.driver.find_element_by_id("firstname").send_keys("gwen")
