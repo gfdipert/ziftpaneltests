@@ -6,7 +6,8 @@ if sys.platform == 'win32':
     win_unicode_console.enable() 
     #needed for windows because windows is stupid
 
-URL = raw_input('Enter URL: ')
+#URL = raw_input('Enter URL: ')
+URL = 'http://sites.ziftsolutions.com/rad_software_ltd/ad332d88/Epicor_ERP_Microsite#principle_1'
 test = LinkTests(URL)
 test.PDF()
 

@@ -49,16 +49,18 @@ class LinkTests(object):
 		self.driver.get(page)
 		WebDriverWait(self.driver,5)
 		links = self.driver.find_elements_by_tag_name('a')
-		PDFstatus = []
+		PDFstatus = ""
 		for link in links:
 			href = link.get_attribute('href').encode('ascii','ignore')
-			if '.pdf' or '.PDF' in href:
-				self.PDFTextCheck(link)
-				print href
-				PDFstatus = "PDFS"
-			else:
+			if 'pdf' not in href.split('.'):
 				pass
+			else:
+				title = link.text.encode('ascii','ignore')
+				print self.driver.current_url
+				self.PDFTextCheck(title,href)
+				PDFstatus = "PDF"
 		if PDFstatus == "":
+			print self.driver.current_url
 			print "There are no PDFs on this page."
 
 	def Close(self):
@@ -123,26 +125,23 @@ class LinkTests(object):
 				else:
 					self.driver.switch_to_window(windows[i])
 
-	def PDFTextCheck(self,link):
-		url = link.get_attribute('href')
-		titlestring = link.text.encode('ascii','ignore')
-		titletest = titlestring[:4]
+	def PDFTextCheck(self,title,href):
 		try:
-			r = requests.get(url)
+			r = requests.get(href)
 			status = r.status_code
 			if status == 200:
 				try:
-					if titletest in convert_pdf_to_txt(url):
-						docstatus = "{0} is linking to the correct document.".format(titlestring)
+					if title in convert_pdf_to_txt(href):
+						docstatus = "{0} is linking to the correct document.".format(title)
 					else:
-						docstatus = "{0} is working fine but I can't find the title.".format(titlestring)
-				except:
-					docstatus = "I can't read {0}, but the link is working.".format(titlestring)
+						docstatus = "{0} is working fine but I can't find the title.".format(title)
+				except Exception as e:
+					docstatus = "I can't read {0}, but the link is working.".format(title)
 			else:
-				docstatus = "{0} failed with status code {1}".format(titlestring, status)
-		except:
-			docstatus = "{0} FAILED because the domain name isn't valid".format(titlestring)
-			print docstatus
+				docstatus = "{0} failed with status code {1}".format(title, status)
+		except Exception as e:
+			docstatus = "{0} FAILED because the domain name isn't valid".format(title)
+		print docstatus
 
 	def FormFill(self):
 		self.driver.find_element_by_id("firstname").send_keys("gwen")
