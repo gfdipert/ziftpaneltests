@@ -22,7 +22,7 @@ class LinkTests(object):
 		os.environ["webdriver.chrome.driver"] = chromedriver
 		self.driver = webdriver.Chrome(chromedriver)
 		self.driver.get(url)
-		self.handle = self.driver.current_window_handle
+		#self.handle = self.driver.current_window_handle
 
 	def GateTest(self,link):
 		if '?zPage=' in link.get_attribute("href"):
@@ -52,13 +52,13 @@ class LinkTests(object):
 		PDFstatus = ""
 		for link in links:
 			href = link.get_attribute('href').encode('ascii','ignore')
-			if 'pdf' not in href.split('.'):
-				pass
-			else:
+			if 'pdf' in href.split('.'):
 				title = link.text.encode('ascii','ignore')
 				print self.driver.current_url
 				self.PDFTextCheck(title,href)
 				PDFstatus = "PDF"
+			else:
+				pass
 		if PDFstatus == "":
 			print self.driver.current_url
 			print "There are no PDFs on this page."
@@ -73,40 +73,40 @@ class LinkTests(object):
 		for svparent in svparents:
 			if "clsSVAssetType_application_pdf" in svparent.get_attribute('class'):
 				svlink = svparent.find_element_by_tag_name('a')
-				self.PDFTextCheck(svlink)
+				svlinktitle = svlink.text.encode('ascii','ignore')
+				#title truncation handles Fuji Xerox
+				self.PDFTextCheck(svlinktitle[len(svlinktitle)-5:len(svlinktitle)-1],svlink.get_attribute('href'))
 			else:
 				pass
 		links = self.driver.find_elements_by_tag_name('a')
-		navs = self.driver.find_elements_by_xpath(".//*[ancestor::div[@name='Panel Header']]")
-		contacts = self.driver.find_elements_by_xpath("//a[@title='Contact Form']")
-		policies = self.driver.find_elements_by_link_text('Privacy Policy')
-		#Epicor
-		tops = self.driver.find_elements_by_class_name('z_nav')
+		#Dell EMC
+		navs = self.driver.find_elements_by_xpath("//*[ancestor::li[@class='MenuMainItem']]")
+		subnavs = self.driver.find_elements_by_xpath("//*[ancestor::div[@name='Product Families']]")
 		"""
 		these are all unique solutions for ignoring links in the nav header
-		handles Dell APJ:
-		navs = []
-		divs = self.driver.find_elements_by_xpath(".//*[ancestor::div]")
-		for div in divs:
-			if 'z_nav' in div.get_attribute('class'):
-				navs.append(div)
-		handles Nexsan:
-		nexsans = self.driver.find_elements_by_xpath(".//*[ancestor::div[@id='idSVNav']]")
-		handles VMWare:
-		menus = self.driver.find_elements_by_xpath(".//*[ancestor::span[@name='Showcase Nav']]")
+		Dell APJ:
+			navs = self.driver.find_elements_by_xpath(".//*[ancestor::div[@class='z_row header']]")
+			subnavs = self.driver.find_elements_by_xpath(".//*[ancestor::ul[@class='dropdown-menu solutionsdd sm-nowrap']]")
+		Nexsan:
+			nexsans = self.driver.find_elements_by_xpath(".//*[ancestor::div[@id='idSVNav']]")
+		VMWare:
+			menus = self.driver.find_elements_by_xpath(".//*[ancestor::span[@name='Showcase Nav']]")
+		Epicor:
+			tops = self.driver.find_elements_by_class_name('z_nav')
 		"""
 		zlinks = []
 		for link in links:
-			if link not in navs and link not in contacts and link not in policies and link not in tops:
+			if link not in navs and link not in subnavs:
 				zlinks.append(link)
 		gated = []
 		for zlink in zlinks:
+			zlinktitle = zlink.text.encode('ascii','ignore')
 			try:
 				if self.GateTest(zlink):
 					self.GetFormURL(zlink)
 					gated.append(zlink)
-				elif '.pdf' or '.PDF' in zlink.get_attribute('href'):
-					self.PDFTextCheck(zlink)
+				elif 'pdf' in zlink.get_attribute('href').split('.'):
+					self.PDFTextCheck(zlinktitle,zlink.get_attribute('href'))
 			except:
 				pass
 		windows = self.driver.window_handles
@@ -135,11 +135,11 @@ class LinkTests(object):
 						docstatus = "{0} is linking to the correct document.".format(title)
 					else:
 						docstatus = "{0} is working fine but I can't find the title.".format(title)
-				except Exception as e:
+				except:
 					docstatus = "I can't read {0}, but the link is working.".format(title)
 			else:
 				docstatus = "{0} failed with status code {1}".format(title, status)
-		except Exception as e:
+		except:
 			docstatus = "{0} FAILED because the domain name isn't valid".format(title)
 		print docstatus
 

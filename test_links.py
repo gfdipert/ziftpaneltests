@@ -6,8 +6,7 @@ if sys.platform == 'win32':
     win_unicode_console.enable() 
     #needed for windows because windows is stupid
 
-#URL = raw_input('Enter URL: ')
-URL = 'http://sites.ziftsolutions.com/rad_software_ltd/ad332d88/Epicor_ERP_Microsite#principle_1'
+URL = raw_input('Enter URL: ')
 test = LinkTests(URL)
 test.PDF()
 
@@ -23,7 +22,7 @@ PDFS without form
 	http://sites.ziftsolutions.com/solid_state_solution38870/d3a6593b/EMC_Showcase_en?zPage=Hybrid-Cloud-68a5010d - Works, for the most part.  Doesn't ignore breadcrumb links.
 
 	Dell APJ
-	http://samples.zift123.com/?aa=dell.ziftsolutions.com&wid=ff80818157e29ef001580189791a6da9&zPage=Resources-126c5928 - WORKS!
+	http://samples.zift123.com/?aa=dell.ziftsolutions.com&wid=ff80818157e29ef001580189791a6da9&zPage=Resources-126c5928 - BROKEN
 
 PDFS with form
 	Epicor (unique case)
