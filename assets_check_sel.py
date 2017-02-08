@@ -69,13 +69,44 @@ class LinkTests(object):
 	def PDF(self):
 		self.driver.get(self.url)
 		WebDriverWait(self.driver,10)
-		zlinks = self.driver.find_elements_by_xpath("//span[@name='RES.Resource Name']/ancestor::*[position()=1]")
-		zlinknames = self.driver.find_elements_by_xpath("//span[@name='RES.Resource Name']")
+		svparents = self.driver.find_elements_by_tag_name('li')
+		for svparent in svparents:
+			if "clsSVAssetType_application_pdf" in svparent.get_attribute('class'):
+				svlink = svparent.find_element_by_tag_name('a')
+				svlinktitle = svlink.text.encode('ascii','ignore')
+			else:
+				pass
+		links = self.driver.find_elements_by_tag_name('a')
+		zlinks = []
+		for link in links:
+			if link not in navs and link not in subnavs:
+				zlinks.append(link)
+		gated = []
 		for zlink in zlinks:
-			for zlinkname in zlinknames:
-				zlinktitle = zlinkname.get_attribute('innerHTML')
-				if 'pdf' in zlink.get_attribute('href').split('.'):
+			zlinktitle = zlink.text.encode('ascii','ignore')
+			try:
+				if self.GateTest(zlink):
+					self.GetFormURL(zlink)
+					gated.append(zlink)
+				elif 'pdf' in zlink.get_attribute('href').split('.'):
 					self.PDFTextCheck(zlinktitle,zlink.get_attribute('href'))
+			except:
+				pass
+		windows = self.driver.window_handles
+		numwindows = len(self.driver.window_handles)
+		i = 1
+		if i == numwindows:
+			return
+			print "No gated PDFs"
+		else:
+			self.driver.switch_to_window(windows[1])
+			while i < numwindows:
+				self.PDFFormSubmit()
+				i += 1
+				if i == numwindows:
+					pass
+				else:
+					self.driver.switch_to_window(windows[i])
 				else:
 					pass
 
