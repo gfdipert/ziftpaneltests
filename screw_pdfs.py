@@ -13,15 +13,9 @@ def convert_pdf_to_txt(url):
     laparams = LAParams()
     device = TextConverter(rsrcmgr, retstr, codec=codec, laparams=laparams)
 
-    url = url.replace('https://','')
-    c = httplib.HTTPSConnection(url)
-    c.request('PUT','/')
-    response = c.getresponse()
-    response.read()
-    c.request('GET','/')
-    scrape = response.read()
-
-    #scrape = urlopen(url).read()
+    url = url.replace('https://','http://')
+    print url
+    scrape = urlopen(url).read()
     fp = StringIO(scrape)
 
     interpreter = PDFPageInterpreter(rsrcmgr, device)
@@ -46,7 +40,7 @@ def pdf_from_url_to_txt(url):
     laparams = LAParams()
     device = TextConverter(rsrcmgr, retstr, codec=codec, laparams=laparams)
     # Open the url provided as an argument to the function and read the content
-    f = urllib2.HTTPSHandler(urllib2.Request(url)).read()
+    f = urllib2.urlopen(urllib2.Request(url)).read()
     # Cast to StringIO object
     fp = StringIO(f)
     interpreter = PDFPageInterpreter(rsrcmgr, device)
