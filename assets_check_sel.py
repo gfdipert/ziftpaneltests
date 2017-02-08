@@ -68,7 +68,6 @@ class LinkTests(object):
 
 	def PDF(self):
 		self.driver.get(self.url)
-		WebDriverWait(self.driver,10)
 		zlinks = self.driver.find_elements_by_xpath("//span[@name='RES.Resource Name']/ancestor::*[position()=1]")
 		zlinknames = self.driver.find_elements_by_xpath("//span[@name='RES.Resource Name']")
 		for zlink in zlinks:
