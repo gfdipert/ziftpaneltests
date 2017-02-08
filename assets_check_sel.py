@@ -2,7 +2,6 @@ import os
 import sys
 import time
 import requests
-from screw_pdfs import convert_pdf_to_txt
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,6 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from urllib2 import urlopen
+from screw_pdfs import convert_pdf_to_txt
 
 class LinkTests(object):
 
@@ -18,7 +18,7 @@ class LinkTests(object):
 
 	def __init__(self,url):
 		self.url = url
-		chromedriver = "C:\Users\Gwen Dipert\Documents\chromedriver.exe"
+		chromedriver = "/Users/gwendipert/Documents/chromedriver"
 		os.environ["webdriver.chrome.driver"] = chromedriver
 		self.driver = webdriver.Chrome(chromedriver)
 		self.driver.get(url)
@@ -78,12 +78,11 @@ class LinkTests(object):
 				self.PDFTextCheck(svlinktitle[len(svlinktitle)-5:len(svlinktitle)-1],svlink.get_attribute('href'))
 			else:
 				pass
+		"""
 		links = self.driver.find_elements_by_tag_name('a')
-		#Dell EMC
+		Dell EMC
 		navs = self.driver.find_elements_by_xpath("//*[ancestor::li[@class='MenuMainItem']]")
 		subnavs = self.driver.find_elements_by_xpath("//*[ancestor::div[@name='Product Families']]")
-		"""
-		these are all unique solutions for ignoring links in the nav header
 		Dell APJ:
 			navs = self.driver.find_elements_by_xpath(".//*[ancestor::div[@class='z_row header']]")
 			subnavs = self.driver.find_elements_by_xpath(".//*[ancestor::ul[@class='dropdown-menu solutionsdd sm-nowrap']]")
@@ -93,14 +92,11 @@ class LinkTests(object):
 			menus = self.driver.find_elements_by_xpath(".//*[ancestor::span[@name='Showcase Nav']]")
 		Epicor:
 			tops = self.driver.find_elements_by_class_name('z_nav')
-		"""
-		zlinks = []
 		for link in links:
 			if link not in navs and link not in subnavs:
 				zlinks.append(link)
 		gated = []
 		for zlink in zlinks:
-			zlinktitle = zlink.text.encode('ascii','ignore')
 			try:
 				if self.GateTest(zlink):
 					self.GetFormURL(zlink)
@@ -124,6 +120,17 @@ class LinkTests(object):
 					pass
 				else:
 					self.driver.switch_to_window(windows[i])
+		"""
+
+		zlinks = self.driver.find_elements_by_xpath("//span[@name='RES.Resource Name']/ancestor::*[position()=1]")
+		zlinknames = self.driver.find_elements_by_xpath("//span[@name='RES.Resource Name']")
+		for zlink in zlinks:
+			for zlinkname in zlinknames:
+				zlinktitle = zlinkname.get_attribute('innerHTML')
+				if 'pdf' in zlink.get_attribute('href').split('.'):
+					self.PDFTextCheck(zlinktitle,zlink.get_attribute('href'))
+				else:
+					pass
 
 	def PDFTextCheck(self,title,href):
 		try:
