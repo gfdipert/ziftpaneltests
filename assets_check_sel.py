@@ -2,6 +2,8 @@ import os
 import sys
 import time
 import requests
+import re
+import urllib3
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -9,6 +11,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from urllib2 import urlopen
+from urlparse import urlsplit
+from urlparse import urlparse
+import urllib3.contrib.pyopenssl
 from screw_pdfs import convert_pdf_to_txt
 
 class LinkTests(object):
@@ -73,8 +78,10 @@ class LinkTests(object):
 		for zlink in zlinks:
 			for zlinkname in zlinknames:
 				zlinktitle = zlinkname.get_attribute('innerHTML')
-				if 'pdf' in zlink.get_attribute('href').split('.'):
-					self.PDFTextCheck(zlinktitle,zlink.get_attribute('href'))
+				href = zlink.get_attribute('href')
+				if 'pdf' in href.split('.'):
+					#href = href.replace('https://','http://')
+					self.PDFTextCheck(zlinktitle,href)
 				else:
 					pass
 
