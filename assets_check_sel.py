@@ -67,16 +67,25 @@ class LinkTests(object):
 		self.driver.close()
 
 	def PDF(self):
+	def PDF(self):
 		self.driver.get(self.url)
 		WebDriverWait(self.driver,10)
-		svparents = self.driver.find_elements_by_tag_name('li')
-		for svparent in svparents:
-			if "clsSVAssetType_application_pdf" in svparent.get_attribute('class'):
-				svlink = svparent.find_element_by_tag_name('a')
-				svlinktitle = svlink.text.encode('ascii','ignore')
-			else:
-				pass
 		links = self.driver.find_elements_by_tag_name('a')
+		"""
+		Dell EMC
+		navs = self.driver.find_elements_by_xpath("//*[ancestor::li[@class='MenuMainItem']]")
+		subnavs = self.driver.find_elements_by_xpath("//*[ancestor::div[@name='Product Families']]")
+		these are all unique solutions for ignoring links in the nav header
+		Dell APJ:
+			navs = self.driver.find_elements_by_xpath(".//*[ancestor::div[@class='z_row header']]")
+			subnavs = self.driver.find_elements_by_xpath(".//*[ancestor::ul[@class='dropdown-menu solutionsdd sm-nowrap']]")
+		Nexsan:
+			nexsans = self.driver.find_elements_by_xpath(".//*[ancestor::div[@id='idSVNav']]")
+		VMWare:
+			menus = self.driver.find_elements_by_xpath(".//*[ancestor::span[@name='Showcase Nav']]")
+		Epicor:
+			tops = self.driver.find_elements_by_class_name('z_nav')
+		"""
 		zlinks = []
 		for link in links:
 			if link not in navs and link not in subnavs:
@@ -107,8 +116,7 @@ class LinkTests(object):
 					pass
 				else:
 					self.driver.switch_to_window(windows[i])
-				else:
-					pass
+
 
 	def PDFTextCheck(self,title,href):
 		try:
