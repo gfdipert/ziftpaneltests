@@ -23,9 +23,9 @@ class LinkTests(object):
 
 	def __init__(self,url):
 		self.url = url
-		chromedriver = "/Users/gwendipert/Documents/chromedriver"
-		os.environ["webdriver.chrome.driver"] = chromedriver
-		self.driver = webdriver.Chrome(chromedriver)
+		#chromedriver = "/Users/gwendipert/Documents/chromedriver"
+		#os.environ["webdriver.chrome.driver"] = chromedriver
+		self.driver = webdriver.Chrome()
 		self.driver.get(url)
 		#self.handle = self.driver.current_window_handle
 
